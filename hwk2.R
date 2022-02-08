@@ -18,10 +18,9 @@ floods <- full_join(streamH, # left table
                     by="siteID")
 head(floods)
 
-max.cat <- floods %>%
+first.flood <- floods %>%
   group_by(names) %>%
   filter(gheight.ft >= major.ft) %>%
   summarize(min(dateF))
-head(max.cat)
-  
+
   
