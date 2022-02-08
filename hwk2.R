@@ -21,7 +21,7 @@ head(floods)
 max.cat <- floods %>%
   group_by(names) %>%
   filter(gheight.ft >= major.ft) %>%
-  summarize(min(datetime))
+  summarize(min(dateF))
 head(max.cat)
   
   
