@@ -22,5 +22,10 @@ first.flood <- floods %>%
   group_by(names) %>%
   filter(gheight.ft >= major.ft) %>%
   summarize(min(dateF))
+floods$name_groups <- factor(floods$names)
+
+floods %>% group_by(names) %>%
+  with(plot(dateF, gheight.ft, col = name_groups))
+legend(legend = c(floods$name_groups))
 
   
