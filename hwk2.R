@@ -2,6 +2,8 @@ library(dplyr)
 library(lubridate)
 library(ggplot2)
 
+
+# initialize data
 streamH <- read.csv("/cloud/project/activtiy02/stream_gauge.csv")
 
 siteInfo <- read.csv("/cloud/project/activtiy02/site_info.csv")
@@ -19,19 +21,12 @@ floods <- full_join(streamH, # left table
                     by="siteID")
 head(floods)
 
-first.major <- floods %>%
-  group_by(names) %>%
-  filter(gheight.ft >= major.ft) %>%
-  summarize(min(dateF))
-floods$name_groups <- factor(floods$names)
 
-floods %>% group_by(names) %>%
-  with(plot(dateF, gheight.ft, col = name_groups))
-
-
+# QUESTION 1plot all rivers height vs time
 floods %>% 
   ggplot(aes(dateF, gheight.ft, color = names)) + geom_point()
 
+# QUESTION 2create data frames with the first data of each flood level
 first.action <- floods %>%
   group_by(names) %>%
   filter(gheight.ft >= action.ft) %>%
@@ -55,19 +50,22 @@ first.major <- floods %>%
   filter(gheight.ft >= major.ft) %>%
   summarize(min(dateF))
 colnames(first.major)<- c('name', "first_major")
-
+# merge all said data frame
 
 flood_dates <- first.action %>% 
   full_join(first.flood, by = 'name') %>%
   full_join(first.moderate, by = 'name') %>%
   full_join(first.major, by = 'name')
 
+# find the time difference from flood level to flood level
 flood_dates <- mutate(flood_dates, action_to_flood_time = difftime(first_flood, first_action, units = "hours"),
                       flood_to_moderate_time = difftime(first_moderate, first_flood, units = "hours"),
                       moderate_to_major_time = difftime(first_major, first_moderate, units = "hours"))
-
+# QUESTION 3
+# find the exceedance of the major flood level
 floods <- mutate(floods, major.exceedance = gheight.ft - major.ft)
 
 max.flood <- floods %>%
   group_by(names) %>%
   summarize(max(exceedance))
+
